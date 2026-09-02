@@ -24,7 +24,8 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    z-index: 999999;
+    z-index: 2147483647;
+    pointer-events: auto !important;
 }
 
 #prank-box {
@@ -36,6 +37,9 @@
     margin: 10px;
     font-size: 16px;
     cursor: pointer;
+    position: relative;
+    z-index: 2147483647;
+    pointer-events: auto !important;
 }
 
 #status {
@@ -48,20 +52,18 @@
 <body>
 
 <canvas id="screen"></canvas>
+<div id="ui"></div>
+<div id="transition-layer"></div>
 
-<div id="ui">
-    <div id="prank-overlay">
-        <div id="prank-box">
-            <h1>PolyTrack</h1>
-            <h2>Do you want to play?</h2>
-            <button class="prank-btn" onclick="yes()">YES</button>
-            <button class="prank-btn" onclick="no()">NO</button>
-            <p id="status"></p>
-        </div>
+<div id="prank-overlay">
+    <div id="prank-box">
+        <h1>PolyTrack</h1>
+        <h2>Do you want to play?</h2>
+        <button class="prank-btn" onclick="yes()">YES</button>
+        <button class="prank-btn" onclick="no()">NO</button>
+        <p id="status"></p>
     </div>
 </div>
-
-<div id="transition-layer"></div>
 
 <script>
 function no() {
