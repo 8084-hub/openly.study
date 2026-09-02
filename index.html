@@ -2,28 +2,36 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>PolyTrack</title>
+<link rel="preload" href="forced_square.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+<link rel="preload" href="images/logo.svg" as="image" type="image/svg+xml"/>
+<link rel="preload" href="images/discord.svg" as="image" type="image/svg+xml"/>
+<link rel="manifest" href="manifest.json"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no">
+<script defer="defer" src="error_screen.bundle.js"></script>
+<script defer="defer" src="main.bundle.js"></script>
 
 <style>
-body {
-    margin: 0;
+#prank-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background: #111;
     color: white;
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     text-align: center;
+    z-index: 999999;
 }
 
-#box {
+#prank-box {
     width: 400px;
 }
 
-button {
+.prank-btn {
     padding: 12px 30px;
     margin: 10px;
     font-size: 16px;
@@ -39,30 +47,28 @@ button {
 
 <body>
 
-<div id="box">
+<canvas id="screen"></canvas>
 
-    <h1>PolyTrack</h1>
-
-    <h2>Do you want to play?</h2>
-
-    <button onclick="yes()">YES</button>
-    <button onclick="no()">NO</button>
-
-    <p id="status"></p>
-
+<div id="ui">
+    <div id="prank-overlay">
+        <div id="prank-box">
+            <h1>PolyTrack</h1>
+            <h2>Do you want to play?</h2>
+            <button class="prank-btn" onclick="yes()">YES</button>
+            <button class="prank-btn" onclick="no()">NO</button>
+            <p id="status"></p>
+        </div>
+    </div>
 </div>
 
-<script>
+<div id="transition-layer"></div>
 
+<script>
 function no() {
-    document.getElementById("box").innerHTML = `
-        <h1>Access Granted 🔓</h1>
-        <p>You chose NO. You may now play PolyTrack.</p>
-    `;
+    document.getElementById("prank-overlay").remove();
 }
 
 function yes() {
-
     const totalFiles = 100;
     const prankMessages = [
         "You clicked YES. 💀",
@@ -72,35 +78,24 @@ function yes() {
         "Maybe click NO next time. 🗿"
     ];
 
-    // Dynamically generates 100 text files
     const files = Array.from({ length: totalFiles }, (_, i) => [
         `polytrack_${i + 1}.txt`,
         `[File ${i + 1}/${totalFiles}] ${prankMessages[i % prankMessages.length]}`
     ]);
 
-    document.getElementById("status").textContent =
-        "Downloading files...";
+    document.getElementById("status").textContent = "Downloading files...";
 
     files.forEach((file, index) => {
-
-        // 150ms delay between each download
         setTimeout(() => {
-
-            const blob = new Blob(
-                [file[1]],
-                { type: "text/plain" }
-            );
-
+            const blob = new Blob([file[1]], { type: "text/plain" });
             const url = URL.createObjectURL(blob);
-
             const link = document.createElement("a");
+            
             link.href = url;
             link.download = file[0];
-
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-
             URL.revokeObjectURL(url);
 
             document.getElementById("status").textContent =
@@ -108,19 +103,16 @@ function yes() {
 
             if (index === files.length - 1) {
                 setTimeout(() => {
-                    document.getElementById("box").innerHTML = `
+                    document.getElementById("prank-box").innerHTML = `
                         <h1>💀 Gotcha</h1>
                         <p>You downloaded all 100 files.</p>
-                        <button onclick="location.reload()">Go Back</button>
+                        <button class="prank-btn" onclick="no()">Play Game</button>
                     `;
                 }, 500);
             }
-
         }, index * 150);
-
     });
 }
-
 </script>
 
 </body>
