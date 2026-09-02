@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html>
 <head>
@@ -30,16 +31,9 @@ button {
     cursor: pointer;
 }
 
-#downloads {
+#status {
     margin-top: 20px;
-    height: 150px;
-    overflow: hidden;
-    text-align: left;
     font-family: monospace;
-}
-
-.file {
-    margin: 3px;
 }
 </style>
 </head>
@@ -52,64 +46,76 @@ button {
 
     <h2>Do you want to play?</h2>
 
-    <button onclick="playGame()">YES</button>
-    <button onclick="noAccess()">NO</button>
+    <button onclick="yes()">YES</button>
+    <button onclick="no()">NO</button>
 
-    <div id="downloads"></div>
+    <p id="status"></p>
 
 </div>
 
 <script>
 
-function noAccess() {
+function no() {
     document.getElementById("box").innerHTML = `
         <h1>Access Granted 🔓</h1>
-        <p>You chose wisely.</p>
-        <button onclick="location.reload()">Continue</button>
+        <p>You chose NO. You may now play PolyTrack.</p>
     `;
 }
 
-function playGame() {
+function yes() {
 
-    document.getElementById("box").innerHTML = `
-        <h1>Downloading PolyTrack...</h1>
-        <p id="status">Preparing files...</p>
-        <div id="downloads"></div>
-    `;
+    const files = [
+        ["polytrack_1.txt", "You clicked YES. 💀"],
+        ["polytrack_2.txt", "Why did you click YES?"],
+        ["polytrack_3.txt", "This is a harmless prank."],
+        ["polytrack_4.txt", "Your PolyTrack experience has been temporarily interrupted."],
+        ["polytrack_5.txt", "Maybe click NO next time. 🗿"]
+    ];
 
-    let count = 0;
+    document.getElementById("status").textContent =
+        "Downloading files...";
 
-    const interval = setInterval(() => {
+    files.forEach((file, index) => {
 
-        count++;
+        setTimeout(() => {
 
-        const file = document.createElement("div");
-        file.className = "file";
-        file.textContent =
-            "Downloading: polytrack_file_" +
-            count +
-            ".txt";
+            const blob = new Blob(
+                [file[1]],
+                { type: "text/plain" }
+            );
 
-        document.getElementById("downloads").appendChild(file);
+            const url = URL.createObjectURL(blob);
 
-        document.getElementById("status").textContent =
-            "Downloading " + count + " files...";
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = file[0];
 
-        if (count >= 100) {
-            clearInterval(interval);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            URL.revokeObjectURL(url);
 
             document.getElementById("status").textContent =
-                "Just kidding 💀";
+                "Downloaded " + (index + 1) + " / " + files.length;
 
-            setTimeout(() => {
-                location.reload();
-            }, 2000);
-        }
+            if (index === files.length - 1) {
+                setTimeout(() => {
+                    document.getElementById("box").innerHTML = `
+                        <h1>💀 Gotcha</h1>
+                        <p>You downloaded the files.</p>
+                        <button onclick="location.reload()">Go Back</button>
+                    `;
+                }, 500);
+            }
 
-    }, 50);
+        }, index * 500);
+
+    });
 }
 
 </script>
 
 </body>
 </html>
+```
